@@ -1,5 +1,6 @@
 import numpy as np
 import tkinter as tk
+from tkinter import colorchooser
 
 class life_game:
 
@@ -17,12 +18,15 @@ class life_game:
     MIN_DELAY = 10
     STEP = 10
 
+    MAX_AGE = 10
+
     def __init__(self):
         self._root = tk.Tk()
 
         self._grid = np.random.choice([0, 1], size=(life_game.GRID_WIDTH, life_game.GRID_HEIGHT), p=[0.9, 0.1])
         self._delay: int = life_game.MAX_DELAY // 2
         self._is_paused: bool = False
+        self._main_color = (0, 255, 0) # Green
 
         # Main window
 
@@ -41,6 +45,7 @@ class life_game:
         self._canvas.pack()
 
         self._root.title("Life game")
+        self._root.resizable(False, False)
 
         # Auxiliary window
 
@@ -55,12 +60,14 @@ class life_game:
         speed_up_button = tk.Button(self._control, text="Speed Up", command=self.speed_up)
         speed_up_button.pack(fill='x', padx=10, pady=5)
 
-        slow_down_button = tk.Button(self._control, text="Slow Dowp", command=self.slow_down)
+        slow_down_button = tk.Button(self._control, text="Slow Down", command=self.slow_down)
         slow_down_button.pack(fill='x', padx=10, pady=5)
+
+        choose_color_button = tk.Button(self._control, text="Choose Color", command=self.choose_color)
+        choose_color_button.pack(fill='x', padx=10, pady=5)
 
         self._delay_label = tk.Label(self._control, text=f"Delay: {self._delay} ms")
         self._delay_label.pack(pady=10)
-
     
     def run(self):
         self.setting()
@@ -87,6 +94,12 @@ class life_game:
         self._delay = min(life_game.MAX_DELAY, self._delay + life_game.STEP)
         self.update_delay_label()
 
+    def choose_color(self, event=None):
+        color_code = colorchooser.askcolor(title="Choose main color")
+        if color_code[0] is not None:
+            r, g, b = map(int, color_code[0])
+            self._main_color = (r, g, b)
+
     def update_grid(self):
         if not self._is_paused:
             self.update_state()
@@ -104,22 +117,36 @@ class life_game:
                         if dx == 0 and dy == 0:
                             continue
                         xx, yy = (x + dx) % life_game.GRID_WIDTH, (y + dy) % life_game.GRID_HEIGHT
-                        neighbor_count += self._grid[xx][yy]
-                if self._grid[x][y] == 1:
+                        neighbor_count += 1 if self._grid[xx][yy] > 0 else 0
+                if self._grid[x][y] > 0:
                     if neighbor_count < 2 or neighbor_count > 3:
                         new_grid[x][y] = 0
+                    else:
+                        new_grid[x][y] = min(new_grid[x][y] + 1, life_game.MAX_AGE) # Age increases
                 else:
                     if neighbor_count == 3:
                         new_grid[x][y] = 1
+                    else:
+                        new_grid[x][y] = 0
 
         self._grid = new_grid
-
 
     def draw_grid(self):
         for x in range(life_game.GRID_WIDTH):
             for y in range(life_game.GRID_HEIGHT):
-                if self._grid[x][y] == 1:
-                    self._canvas.itemconfig(self._rectangles[x][y], fill="green")
+                if self._grid[x][y] > 0:
+                    color = self.get_color(self._grid[x][y])
+                    self._canvas.itemconfig(self._rectangles[x][y], fill=color)
                 else:
                     self._canvas.itemconfig(self._rectangles[x][y], fill="black")
+    
+    def get_color(self, age: int):
+        age = min(age, life_game.MAX_AGE)
+        r, g, b = self._main_color
+        factor = age / life_game.MAX_AGE
+        r = int(r * (0.3 + 0.7 * factor))
+        g = int(g * (0.3 + 0.7 * factor))
+        b = int(b * (0.3 + 0.7 * factor))
+        return f"#{r:02x}{g:02x}{b:02x}"
+
 
