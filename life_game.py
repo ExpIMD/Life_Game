@@ -3,6 +3,7 @@ import tkinter as tk
 
 class life_game:
 
+    # Units of measurement - pixel
     WIDTH, HEIGHT = 1000, 1000
 
     CELL_SIZE = 10
@@ -11,6 +12,7 @@ class life_game:
 
     DIRECTIONS = [0, 1, -1]
 
+    # Units of measurement - ms
     MAX_DELAY = 1000
     MIN_DELAY = 10
     STEP = 10
@@ -19,8 +21,10 @@ class life_game:
         self._root = tk.Tk()
 
         self._grid = np.random.choice([0, 1], size=(life_game.GRID_WIDTH, life_game.GRID_HEIGHT), p=[0.9, 0.1])
-        self._delay: int = 100
+        self._delay: int = life_game.MAX_DELAY // 2
         self._is_paused: bool = False
+
+        # Main window
 
         self._rectangles = [[None]*life_game.GRID_HEIGHT for _ in range(life_game.GRID_WIDTH)]
         self._canvas = tk.Canvas(self._root, width=life_game.WIDTH, height=life_game.HEIGHT, bg="black")
@@ -37,6 +41,26 @@ class life_game:
         self._canvas.pack()
 
         self._root.title("Life game")
+
+        # Auxiliary window
+
+        self._control = tk.Toplevel(self._root)
+        self._control.title("Controls")
+        self._control.geometry("200x200")
+        self._control.resizable(False, False)
+
+        pause_button = tk.Button(self._control, text="Pause", command=self.pause)
+        pause_button.pack(fill='x', padx=10, pady=5)
+
+        speed_up_button = tk.Button(self._control, text="Speed Up", command=self.speed_up)
+        speed_up_button.pack(fill='x', padx=10, pady=5)
+
+        slow_down_button = tk.Button(self._control, text="Slow Dowp", command=self.slow_down)
+        slow_down_button.pack(fill='x', padx=10, pady=5)
+
+        self._delay_label = tk.Label(self._control, text=f"Delay: {self._delay} ms")
+        self._delay_label.pack(pady=10)
+
     
     def run(self):
         self.setting()
@@ -50,13 +74,18 @@ class life_game:
     
     def pause(self, event=None):
         self._is_paused = not self._is_paused
-        pass
+        self.update_delay_label()
+
+    def update_delay_label(self):
+        self._delay_label.config(text=f"Delay: {self._delay} ms")
 
     def speed_up(self, event=None):
         self._delay = max(life_game.MIN_DELAY, self._delay - life_game.STEP)
+        self.update_delay_label()
 
     def slow_down(self, event=None):
         self._delay = min(life_game.MAX_DELAY, self._delay + life_game.STEP)
+        self.update_delay_label()
 
     def update_grid(self):
         if not self._is_paused:
@@ -66,6 +95,7 @@ class life_game:
 
     def update_state(self):
         new_grid = np.copy(self._grid)
+
         for x in range(life_game.GRID_WIDTH):
             for y in range(life_game.GRID_HEIGHT):
                 neighbor_count = 0
@@ -81,6 +111,7 @@ class life_game:
                 else:
                     if neighbor_count == 3:
                         new_grid[x][y] = 1
+
         self._grid = new_grid
 
 
