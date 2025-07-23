@@ -11,7 +11,7 @@ Any live cell with more than three live neighbors dies (by overpopulation).
 Any dead cell with exactly three live neighbors becomes alive (reproduction).
 Neighbors are counted in all 8 directions around the cell (including diagonals).
 
-Each live cell stores its "age" — the number of generations it has been alive. The cell’s color becomes brighter with age.
+Each live cell stores its age — the number of generations it has been alive. The cell’s color becomes brighter with age.
 
 ## User Features
 
