@@ -3,6 +3,20 @@ import tkinter as tk
 from tkinter import colorchooser
 
 class life_game:
+    """
+    Description:
+        Implementation of Conway's Game of Life simulation with a graphical interface using Tkinter.
+
+        The game consists of a grid of cells, each of which can be alive or dead. The simulation evolves
+        in discrete time steps according to the following rules:
+            1. Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+            2. Any live cell with two or three live neighbors lives on to the next generation.
+            3. Any live cell with more than three live neighbors dies, as if by overpopulation.
+            4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+
+        Each cell tracks its "age" (how many generations it has been alive), influencing its color intensity.
+        Users can control simulation speed, pause/resume, and pick colors for cells and background.
+    """
 
     # Units of measurement - pixel
 
