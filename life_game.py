@@ -77,6 +77,7 @@ class life_game:
         self._control_window.resizable(False, False)
 
         self._control_window.transient(self._root)
+        self._control_window.protocol("WM_DELETE_WINDOW", self._on_control_window_close)
 
         choose_color_button = tk.Button(self._control_window, text="Choose Cell Color", command=self.choose_cell_color)
         choose_color_button.pack(fill='x', padx=10, pady=5)
@@ -122,7 +123,10 @@ class life_game:
         self._root.bind_all("<Up>", self.slow_down)
         self._root.bind_all("<Down>", self.speed_up)
         self._root.bind_all("<Escape>", self.toggle_control_window)
-    
+
+    def _on_control_window_close(self):
+        self._control_window.withdraw()
+
     def pause(self, event=None) -> None:
         """
         Description:
