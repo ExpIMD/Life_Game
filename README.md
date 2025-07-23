@@ -1,4 +1,4 @@
-# Conway's Game of Life — Tkinter Simulation
+# Conway's Game of Life
 
 ## Description
 Conway's Game of Life is a cellular automaton simulating the evolution of a population of cells on a two-dimensional grid. Each cell can be in one of two states: alive or dead. The state of the cells updates step-by-step according to simple rules based on the number of living neighbors.
