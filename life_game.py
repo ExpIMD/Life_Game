@@ -1,6 +1,7 @@
 import numpy as np
 import tkinter as tk
 from tkinter import colorchooser
+import time
 
 class life_game:
     """
@@ -42,7 +43,11 @@ class life_game:
         self._grid = np.random.choice([0, 1], size=(life_game.GRID_WIDTH, life_game.GRID_HEIGHT), p=probability)
         self._delay: int = life_game.MAX_DELAY // 2
         self._is_paused: bool = False
-        self._main_color: tuple[int, int, int] = (0, 255, 0) # By default, the cells are green
+
+        self._last_update_timer: float = time.time() # Units of measurement - s
+        self._timer: float = 0.0
+
+        self._cell_color: tuple[int, int, int] = (0, 255, 0) # By default, the cells are green
         self._background_color: str = "black" # By default, the background is black
 
         # Main window
@@ -68,7 +73,7 @@ class life_game:
 
         self._control_window = tk.Toplevel(self._root)
         self._control_window.title("Controls")
-        self._control_window.geometry("200x250")
+        self._control_window.geometry("200x350")
         self._control_window.resizable(False, False)
 
         self._control_window.transient(self._root)
@@ -90,6 +95,12 @@ class life_game:
 
         self._delay_label = tk.Label(self._control_window, text=f"Delay: {self._delay} ms")
         self._delay_label.pack(pady=10)
+
+        self._population_label = tk.Label(self._control_window, text="Population: 0")
+        self._population_label.pack(pady=5)
+
+        self._timer_label = tk.Label(self._control_window, text="Simulation time: 0 s")
+        self._timer_label.pack(pady=5)
     
     def run(self) -> None:
         """
@@ -107,9 +118,10 @@ class life_game:
             Setting up control keys
         """
 
-        self._root.bind("<space>", self.pause)
-        self._root.bind("<Up>", self.slow_down)
-        self._root.bind("<Down>", self.speed_up)
+        self._root.bind_all("<space>", self.pause)
+        self._root.bind_all("<Up>", self.slow_down)
+        self._root.bind_all("<Down>", self.speed_up)
+        self._root.bind_all("<Escape>", self.toggle_control_window)
     
     def pause(self, event=None) -> None:
         """
@@ -164,10 +176,10 @@ class life_game:
             Choosing the main color for cells
         """
 
-        color_code = colorchooser.askcolor(title="Choose main color")
+        color_code = colorchooser.askcolor(title="Choose the main color for cells")
         if color_code[0] is not None:
             r, g, b = map(int, color_code[0])
-            self._main_color = (r, g, b)
+            self._cell_color = (r, g, b)
 
     def update_simmulation_state(self) -> None:
         """
@@ -178,6 +190,16 @@ class life_game:
         if not self._is_paused:
             self.update_grid()
             self.draw_grid()
+
+            now = time.time()
+            self._timer += now - self._last_update_timer
+            self._last_update_timer = now
+
+        population = np.count_nonzero(self._grid) # It is better to perform one operation than to store the population size in one field and constantly increase or decrease it
+        self._population_label.config(text=f"Population: {population}")
+
+        self._timer_label.config(text=f"Simulation time: {int(self._timer)} s")
+
         self._root.after(self._delay, self.update_simmulation_state)
 
     def update_grid(self) -> None:
@@ -232,6 +254,19 @@ class life_game:
                 else:
                     self._canvas.itemconfig(self._rectangles[x][y], fill=self._background_color)
     
+    def toggle_control_window(self, event=None) -> None:
+        """
+        Description:
+            Toggle visibility of the control window when Escape is pressed.
+        """
+        
+        if self._control_window.state() == 'withdrawn':
+            self._control_window.deiconify()
+            self._control_window.lift()  # Поднять окно поверх других
+        else:
+            self._control_window.withdraw()
+
+    
     def age_to_color(self, age: int) -> str:
         """
         Description:
@@ -241,7 +276,7 @@ class life_game:
         age: int = min(age, life_game.MAX_AGE)
         factor: float = age / life_game.MAX_AGE
 
-        r, g, b = self._main_color
+        r, g, b = self._cell_color
         r: int = int(r * (0.3 + 0.7 * factor))
         g: int = int(g * (0.3 + 0.7 * factor))
         b: int = int(b * (0.3 + 0.7 * factor))
