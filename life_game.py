@@ -4,10 +4,16 @@ import tkinter as tk
 class life_game:
 
     WIDTH, HEIGHT = 1000, 1000
+
     CELL_SIZE = 10
     GRID_WIDTH = WIDTH // CELL_SIZE
     GRID_HEIGHT = HEIGHT // CELL_SIZE
+
     DIRECTIONS = [0, 1, -1]
+
+    MAX_DELAY = 1000
+    MIN_DELAY = 10
+    STEP = 10
 
     def __init__(self):
         self._root = tk.Tk()
@@ -39,10 +45,18 @@ class life_game:
 
     def setting(self):
         self._root.bind("<space>", self.pause)
-
+        self._root.bind("<Up>", self.speed_up)
+        self._root.bind("<Down>", self.slow_down)
+    
     def pause(self, event=None):
         self._is_paused = not self._is_paused
         pass
+
+    def speed_up(self, event=None):
+        self._delay = max(life_game.MIN_DELAY, self._delay - life_game.STEP)
+
+    def slow_down(self, event=None):
+        self._delay = min(life_game.MAX_DELAY, self._delay + life_game.STEP)
 
     def update_grid(self):
         if not self._is_paused:
