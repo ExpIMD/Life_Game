@@ -93,14 +93,14 @@ class life_game:
         pause_button = tk.Button(self._control_window, text="Pause", command=self.pause)
         pause_button.pack(fill='x', padx=10, pady=5)
 
-        self._delay_label = tk.Label(self._control_window, text=f"Delay: {self._delay} ms")
-        self._delay_label.pack(pady=10)
-
         self._population_label = tk.Label(self._control_window, text="Population: 0")
         self._population_label.pack(pady=5)
 
         self._timer_label = tk.Label(self._control_window, text="Simulation time: 0 s")
         self._timer_label.pack(pady=5)
+
+        self._delay_label = tk.Label(self._control_window, text=f"Delay: {self._delay} ms")
+        self._delay_label.pack(pady=10)
     
     def run(self) -> None:
         """
