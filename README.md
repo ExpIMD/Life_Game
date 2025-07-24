@@ -1,7 +1,12 @@
 # Conway's Game of Life
 
 ## Description
+
 Conway's Game of Life is a cellular automaton simulating the evolution of a population of cells on a two-dimensional grid. Each cell can be in one of two states: alive or dead. The state of the cells updates step-by-step according to simple rules based on the number of living neighbors.
+
+Each live cell stores its age — the number of generations it has been alive. The cell’s color becomes brighter with age.
+
+The grid uses cyclic boundaries, so cells on the edges consider neighbors from the opposite edge, creating a seamless wrap-around effect.
 
 ## Game Rules
 
@@ -10,8 +15,6 @@ Any live cell with two or three live neighbors stays alive.
 Any live cell with more than three live neighbors dies (by overpopulation).
 Any dead cell with exactly three live neighbors becomes alive (reproduction).
 Neighbors are counted in all 8 directions around the cell (including diagonals).
-
-Each live cell stores its age — the number of generations it has been alive. The cell’s color becomes brighter with age.
 
 ## User Features
 

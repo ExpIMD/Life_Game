@@ -21,7 +21,7 @@ class life_game:
 
     # Units of measurement - pixel
 
-    WIDTH, HEIGHT = 700, 700
+    WIDTH, HEIGHT = 700, 500
 
     CELL_SIZE: int = 10
     GRID_WIDTH: int = WIDTH // CELL_SIZE
@@ -40,7 +40,7 @@ class life_game:
     def __init__(self, probability: tuple[float, float]):
         self._root = tk.Tk()
 
-        self._grid = np.random.choice([0, 1], size=(life_game.GRID_WIDTH, life_game.GRID_HEIGHT), p=probability)
+        self._grid = np.random.choice([0, 1], size=(life_game.GRID_HEIGHT, life_game.GRID_WIDTH), p=probability)
         self._delay: int = life_game.MAX_DELAY // 2
         self._is_paused: bool = False
 
@@ -55,18 +55,17 @@ class life_game:
         self._root.title("Life game")
         self._root.resizable(False, False)
 
-        self._rectangles = [[None]*life_game.GRID_HEIGHT for _ in range(life_game.GRID_WIDTH)]
+        self._rectangles = [[None]*life_game.GRID_WIDTH for _ in range(life_game.GRID_HEIGHT)]
         self._canvas = tk.Canvas(self._root, width=life_game.WIDTH, height=life_game.HEIGHT, bg=self._background_color)
 
-        for x in range(life_game.GRID_WIDTH):
-            for y in range(life_game.GRID_HEIGHT):
-                x1 = x * life_game.CELL_SIZE
-                y1 = y * life_game.CELL_SIZE
-                x2 = x1 + life_game.CELL_SIZE
-                y2 = y1 + life_game.CELL_SIZE
+        for i in range(life_game.GRID_HEIGHT):
+            for j in range(life_game.GRID_WIDTH):
+                i1 = i * life_game.CELL_SIZE
+                j1 = j * life_game.CELL_SIZE
+                i2 = i1 + life_game.CELL_SIZE
+                j2 = j1 + life_game.CELL_SIZE
                 
-                temp = self._canvas.create_rectangle(x1, y1, x2, y2, fill="black", width=0)
-                self._rectangles[x][y] = temp
+                self._rectangles[i][j] = self._canvas.create_rectangle(i1, j1, i2, j2, fill=self._background_color, width=0)
         self._canvas.pack()
 
         # Auxiliary window
@@ -222,25 +221,25 @@ class life_game:
                 
         new_grid = np.copy(self._grid)
 
-        for x in range(life_game.GRID_WIDTH):
-            for y in range(life_game.GRID_HEIGHT):
+        for i in range(life_game.GRID_HEIGHT):
+            for j in range(life_game.GRID_WIDTH):
                 neighbor_count = 0
-                for dx in life_game.DIRECTIONS:
-                    for dy in life_game.DIRECTIONS:
-                        if dx == 0 and dy == 0:
+                for di in life_game.DIRECTIONS:
+                    for dj in life_game.DIRECTIONS:
+                        if di == 0 and dj == 0:
                             continue
-                        xx, yy = (x + dx) % life_game.GRID_WIDTH, (y + dy) % life_game.GRID_HEIGHT
-                        neighbor_count += 1 if self._grid[xx][yy] > 0 else 0
-                if self._grid[x][y] > 0:
+                        ii, jj = (i + di) % life_game.GRID_HEIGHT, (j + dj) % life_game.GRID_WIDTH # Circular mesh
+                        neighbor_count += 1 if self._grid[ii][jj] > 0 else 0
+                if self._grid[i][j] > 0:
                     if neighbor_count < 2 or neighbor_count > 3:
-                        new_grid[x][y] = 0
+                        new_grid[i][j] = 0
                     else:
-                        new_grid[x][y] = min(new_grid[x][y] + 1, life_game.MAX_AGE) # Age increases
+                        new_grid[i][j] = min(new_grid[i][j] + 1, life_game.MAX_AGE) # Age increases
                 else:
                     if neighbor_count == 3:
-                        new_grid[x][y] = 1
+                        new_grid[i][j] = 1
                     else:
-                        new_grid[x][y] = 0
+                        new_grid[i][j] = 0
 
         self._grid = new_grid
 
@@ -250,13 +249,13 @@ class life_game:
             Drawing the grid in the window application
         """
 
-        for x in range(life_game.GRID_WIDTH):
-            for y in range(life_game.GRID_HEIGHT):
-                if self._grid[x][y] > 0:
-                    color = self.age_to_color(self._grid[x][y])
-                    self._canvas.itemconfig(self._rectangles[x][y], fill=color)
+        for i in range(life_game.GRID_HEIGHT):
+            for j in range(life_game.GRID_WIDTH):
+                if self._grid[i][j] > 0:
+                    color = self.age_to_color(self._grid[i][j])
+                    self._canvas.itemconfig(self._rectangles[i][j], fill=color)
                 else:
-                    self._canvas.itemconfig(self._rectangles[x][y], fill=self._background_color)
+                    self._canvas.itemconfig(self._rectangles[i][j], fill=self._background_color)
     
     def toggle_control_window(self, event=None) -> None:
         """
