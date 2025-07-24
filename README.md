@@ -10,11 +10,11 @@ The grid uses cyclic boundaries, so cells on the edges consider neighbors from t
 
 ## Game Rules
 
-Any live cell with fewer than two live neighbors dies (by loneliness).
+Any live cell with fewer than two live neighbors dies.
 Any live cell with two or three live neighbors stays alive.
-Any live cell with more than three live neighbors dies (by overpopulation).
-Any dead cell with exactly three live neighbors becomes alive (reproduction).
-Neighbors are counted in all 8 directions around the cell (including diagonals).
+Any live cell with more than three live neighbors dies.
+Any dead cell with exactly three live neighbors becomes alive.
+Neighbors are counted in all 8 directions around the cell including diagonals.
 
 ## User Features
 
