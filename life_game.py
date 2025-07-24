@@ -21,7 +21,7 @@ class life_game:
 
     # Units of measurement - pixel
 
-    WIDTH, HEIGHT = 900, 900
+    WIDTH, HEIGHT = 700, 700
 
     CELL_SIZE: int = 10
     GRID_WIDTH: int = WIDTH // CELL_SIZE
