@@ -21,7 +21,7 @@ class life_game:
 
     # Units of measurement - pixel
 
-    WIDTH, HEIGHT = 700, 500
+    WIDTH, HEIGHT = 700, 700
 
     CELL_SIZE: int = 10
     GRID_WIDTH: int = WIDTH // CELL_SIZE
@@ -65,7 +65,7 @@ class life_game:
                 i2 = i1 + life_game.CELL_SIZE
                 j2 = j1 + life_game.CELL_SIZE
                 
-                self._rectangles[i][j] = self._canvas.create_rectangle(i1, j1, i2, j2, fill=self._background_color, width=0)
+                self._rectangles[i][j] = self._canvas.create_rectangle(j1, i1, j2, i2, fill=self._background_color, width=0)
         self._canvas.pack()
 
         # Auxiliary window
